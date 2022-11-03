@@ -174,7 +174,7 @@ class CreateDriverConstraint(bpy.types.Operator):
             else:
                 obj = context.selected_objects[0]
 
-            if get_prop_object(self, context, self.prop_data_path, obj) != None:
+            if get_prop_object(self, context, self.prop_data_path, obj) is not None:
                 self.property_type = get_prop_object(self, context, self.prop_data_path, obj)[1]
             else:
                 self.prop_data_path = ""
@@ -212,8 +212,7 @@ class CreateDriverConstraint(bpy.types.Operator):
         if obj.type == "ARMATURE":
             object_data_icon = "ARMATURE_DATA"
 
-        items = []
-        items.append(("OBJECT_PROPERTY", "Object Property", "Object Property", "OBJECT_DATAMODE", 0))
+        items = [("OBJECT_PROPERTY", "Object Property", "Object Property", "OBJECT_DATAMODE", 0)]
         if obj.type in ["MESH", "CURVE"]:
             items.append(("SHAPEKEY_PROPERTY", "Shapekey Property", "Shapekey Property", "SHAPEKEY_DATA", 1))
             items.append(("MODIFIER_PROPERTY", "Modifier Property", "Modifier Property", "MODIFIER", 5))
@@ -288,10 +287,9 @@ class CreateDriverConstraint(bpy.types.Operator):
                                                                 "Delete Constraints")),
                                          description="Delete or Add Action Constraints for selected bones.")
 
-    space_values = []
-    space_values.append(("LOCAL_SPACE", "Local Space", "Local Space", "None", 0))
-    space_values.append(("TRANSFORM_SPACE", "Transform Space", "Transform Space", "None", 1))
-    space_values.append(("WORLD_SPACE", "World Space", "World Space", "None", 2))
+    space_values = [("LOCAL_SPACE", "Local Space", "Local Space", "None", 0),
+                    ("TRANSFORM_SPACE", "Transform Space", "Transform Space", "None", 1),
+                    ("WORLD_SPACE", "World Space", "World Space", "None", 2)]
     space = bpy.props.EnumProperty(name="Space", items=space_values,
                                    description="Set the space the bone is transformed in. Local Space recommended.")
 
@@ -516,13 +514,13 @@ class CreateDriverConstraint(bpy.types.Operator):
             l_delta = [abs(1.0 - self.driver.scale.x), abs(1.0 - self.driver.scale.y), abs(1.0 - self.driver.scale.z)]
             m_delta = max(l_delta)
             m = max(l)
-            type = ["SCALE_X", "SCALE_Y", "SCALE_Z"]
+            scale_type = ["SCALE_X", "SCALE_Y", "SCALE_Z"]
 
             for i, value in enumerate(l):
                 if l_delta[i] == m_delta:
                     self.min_value = 1.0
                     self.max_value = l[i]
-                    self.type = type[i]
+                    self.type = scale_type[i]
                     break
             return "LIMIT_SCALE"
 
